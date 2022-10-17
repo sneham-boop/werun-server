@@ -38,7 +38,7 @@ const testSupabase = async () => {
 
 //Home
 App.get("/", (req, res) => {
-  res.send("We running!!!");
+  res.send({message: "We running!!!"});
 });
 
 //Users
