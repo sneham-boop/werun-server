@@ -28,7 +28,7 @@ const db = require("./lib/db");
 
 //Home
 App.get("/", (req, res) => {
-  res.send();
+  res.send("We running!!!");
 });
 
 //Users
