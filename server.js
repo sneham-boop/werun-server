@@ -6,7 +6,7 @@ const Bcrypt = require("bcryptjs");
 const CookieSession = require("cookie-session");
 const fs = require("fs");
 const sendUserText = require("./twilio");
-
+const supa = require("@supabase/supabase-js");
 const PORT = 8080;
 
 // Express Configuration
@@ -24,6 +24,16 @@ App.use(
 // Import db
 const db = require("./lib/db");
 
+const supabaseUrl = "https://vuhdrozeicqzvbmnorrl.supabase.co";
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = supa.createClient(supabaseUrl, supabaseKey);
+
+const testSupabase = async () => {
+  let { data: users, error } = await supabase.from("users").select("*");
+  // console.log("All users", users);
+  return { users };
+};
+
 //Routes
 
 //Home
@@ -33,7 +43,14 @@ App.get("/", (req, res) => {
 
 //Users
 App.get("/api/users", (req, res) => {
-  res.send("HEre are the users!!");
+  // const users = testSupabase();
+  // console.log("These are the users",users);
+  // res.send({users: users});
+  testSupabase().then((response) => {
+    const { users } = response;
+    res.send({users: users});
+  });
+  
   // db.getAllUsers()
   //   .then((response) => {
   //     const { users } = response;
@@ -211,7 +228,7 @@ App.post("/api/runs", (req, res) => {
     latitude_to,
     longitude_to,
   } = req.body;
- 
+
   db.createRun({
     name,
     description,
@@ -297,7 +314,6 @@ App.post("/api/register", (req, res) => {
       res.send(e);
     });
 });
-
 
 App.listen(PORT, () => {
   console.log(
