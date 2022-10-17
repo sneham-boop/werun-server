@@ -33,15 +33,16 @@ App.get("/", (req, res) => {
 
 //Users
 App.get("/api/users", (req, res) => {
-  db.getAllUsers()
-    .then((response) => {
-      const { users } = response;
-      res.send({ users });
-    })
-    .catch((e) => {
-      console.error(e);
-      res.send(e);
-    });
+  res.send("HEre are the users!!");
+  // db.getAllUsers()
+  //   .then((response) => {
+  //     const { users } = response;
+  //     res.send({ users });
+  //   })
+  //   .catch((e) => {
+  //     console.error(e);
+  //     res.send(e);
+  //   });
 });
 
 App.get("/api/users/:id", (req, res) => {
