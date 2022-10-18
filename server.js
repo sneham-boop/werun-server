@@ -21,14 +21,14 @@ App.use(
   })
 );
 
-// const supabaseUrl = "https://vuhdrozeicqzvbmnorrl.supabase.co";
-// const supabaseKey = process.env.SUPABASE_KEY;
-// const supabase = supa.createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = "https://vuhdrozeicqzvbmnorrl.supabase.co";
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = supa.createClient(supabaseUrl, supabaseKey);
 
 const testSupabase = async () => {
-  // let { data: users, error } = await supabase.from("users").select("*");
+  let { data: users, error } = await supabase.from("users").select("*");
   // console.log("All users", users);
-  const users = {id: 1, name: "Sneha"};
+  // const users = {id: 1, name: "Sneha"};
   return { users };
 };
 
