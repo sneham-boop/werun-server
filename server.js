@@ -4,10 +4,13 @@ const App = Express();
 const BodyParser = require("body-parser");
 const Bcrypt = require("bcryptjs");
 const CookieSession = require("cookie-session");
+const cors = require("cors");
 const fs = require("fs");
 const sendUserText = require("./twilio");
 const supa = require("@supabase/supabase-js");
 const PORT = 8080;
+
+App.use(cors());
 
 // Express Configuration
 App.use(BodyParser.urlencoded({ extended: false }));
@@ -34,31 +37,70 @@ const testSupabase = async () => {
 
 //Routes
 
+const getRuns = async () => {
+  let { data: runs, error } = await supabase.from("runs").select("*");
+  return { runs };
+};
+
 //Home
 App.get("/", (req, res) => {
   res.send({message: "We running!!!"});
 });
 
-//Users
-App.get("/api/users", (req, res) => {
-  // const users = testSupabase();
-  // console.log("These are the users",users);
-  // res.send({users: users});
-  testSupabase().then((response) => {
-    const { users } = response;
-    res.send({users: users});
+App.get("/runs", (req, res, next) => {
+  getRuns().then((response) => {
+    const { runs } = response;
+    res.send({ runs: runs });
   });
-  
-  // db.getAllUsers()
-  //   .then((response) => {
-  //     const { users } = response;
-  //     res.send({ users });
-  //   })
-  //   .catch((e) => {
-  //     console.error(e);
-  //     res.send(e);
-  //   });
 });
+
+// Get image for run
+App.get("/runs/image/:id", (req, res) => {
+  const runID = req.params.id;
+  const path = `./uploads/${runID}.jpeg`;
+  // Checking if the path exists
+  fs.exists(path, function (exists) {
+    if (!exists) {
+      res.writeHead(404, {
+        "Content-Type": "text/plain",
+      });
+      res.end("404 Not Found");
+      return;
+    }
+
+    // Setting the headers
+    res.writeHead(200, {
+      "Content-Type": "image/jpeg",
+    });
+
+    // Reading the file
+    fs.readFile(path, function (err, content) {
+      // Serving the image
+      res.end(content);
+    });
+  });
+});
+
+//Users
+// App.get("/api/users", (req, res) => {
+//   // const users = testSupabase();
+//   // console.log("These are the users",users);
+//   // res.send({users: users});
+//   testSupabase().then((response) => {
+//     const { users } = response;
+//     res.send({users: users});
+//   });
+  
+//   // db.getAllUsers()
+//   //   .then((response) => {
+//   //     const { users } = response;
+//   //     res.send({ users });
+//   //   })
+//   //   .catch((e) => {
+//   //     console.error(e);
+//   //     res.send(e);
+//   //   });
+// });
 
 // App.get("/api/users/:id", (req, res) => {
 //   const { id } = req.params;
